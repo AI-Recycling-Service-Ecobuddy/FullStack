@@ -6,12 +6,7 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Zustand](https://img.shields.io/badge/zustand-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 
-## 11월 리팩토링 및 기능 추가 예정
-
-1. 리팩토링 (전체적인 design , layout, 리랜더링 최적화, 컴포넌트)
-2. 챗봇 기능 추가 (AI)
-
-# 배포 (CI/CD)
+# 배포 (CI/CD) - Vercel
 
 **URL** : https://www.ecobuddy.life/
 
@@ -22,7 +17,8 @@
 
 ## **프로젝트 내 나의 역할**
 
-- FullStack (Frontend - Next.JS, Backend - MongoDB 모두 담당)  + AI 
+- FullStack (Frontend - Next.JS, Backend - MongoDB 모두 담당)  + AI chatbot 구현
+- PM
 
 ## 🛠 기술 스택
 
@@ -65,9 +61,8 @@
    - Zustand 상태관리 라이브러리 사용
   
 6. **Open AI**
-
    - AI Chat Bot
-   - AI 사진 제작
+   - Prompt 구현
 
 ## 🔍 개발 과정에서 배운 점
 
@@ -91,6 +86,10 @@
 
 **문제**: 동적 페이지 이동 시 데이터 전달의 복잡성
 **해결**: Zustand 상태관리 라이브러리 도입 및 Local Storage 활용 (Zustand persist)
+
+### 4 MongoDB 사용하여 BackEnd - DB 구축
+
+### 5. OpenAI API 사용하여 Chat Bot 구현
 
 ## 🏁 시작하기
 
