@@ -1,10 +1,10 @@
-import { connectMongoDB } from '@/lib/mongodb';
-import { Chat } from '@/models/chat';
-import { auth } from '@/app/auth';  
+import { connectMongoDB } from '@/src/shared/lib/mongodb';
+import { Chat } from '@/src/features/chatbot/model/chat';
+import { auth } from '@/app/auth';
 
 export async function GET() {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -12,8 +12,9 @@ export async function GET() {
   try {
     await connectMongoDB();
 
-    let chat = await Chat.findOne({ userId: session.user.id })
-      .sort({ createdAt: -1 });
+    let chat = await Chat.findOne({ userId: session.user.id }).sort({
+      createdAt: -1,
+    });
 
     if (!chat) {
       chat = await Chat.create({
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
     const chat = await Chat.findByIdAndUpdate(
       chatId,
       { $push: { messages: message } },
-      { new: true }
+      { new: true },
     );
 
     if (!chat) {
