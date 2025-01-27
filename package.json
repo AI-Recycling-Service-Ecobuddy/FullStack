@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "ai": "^4.0.2",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "mongoose": "^8.8.2",
