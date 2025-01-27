@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '@/src/app/providers/AuthProvider';
-import Nav from '@/src/widgets/navbar/ui/Nav';
-import ChatBot from '@/src/features/chatbot/ui/ChatBot';
+import { ChatBot } from '@/src/features/chatbot';
+import Navbar from '@/src/widgets/navbar/ui/Navbar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <main className='mt-[70px]'>
-            <Nav />
+            <Navbar />
             <ChatBot />
             {children}
           </main>

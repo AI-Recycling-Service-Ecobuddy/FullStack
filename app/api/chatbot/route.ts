@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 재활용 관련 프롬프트 강화
     const enhancedPrompt = `
       You are an intelligent AI assistant specialized in answering questions about recycling. 
       You provide expert advice in Korean regarding recycling methods, types of recyclable materials, 
@@ -24,7 +23,6 @@ export async function POST(req: NextRequest) {
       Question: ${prompt}
     `;
 
-    // OpenAI API 호출
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
