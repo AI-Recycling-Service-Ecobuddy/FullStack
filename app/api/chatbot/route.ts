@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,17 +14,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    // 재활용 관련 프롬프트 강화
+    const enhancedPrompt = `
+      You are an intelligent AI assistant specialized in answering questions about recycling. 
+      You provide expert advice in Korean regarding recycling methods, types of recyclable materials, 
+      proper disposal procedures, and sustainability tips. 
+      Ensure your responses are informative and aligned with eco-friendly practices. 
+      
+      Question: ${prompt}
+    `;
 
-    // Prompt를 추가적으로 강화하는 부분 (필요 시 변경)
-    const enhancedPrompt =
-      "This is an intelligent AI chatbot designed to answer caregivers' questions about patients in nursing homes. The chatbot provides smart responses in Korean to questions about patients' symptoms, medications, and illnesses. Do not use ** or any other MDX syntax.";
+    // OpenAI API 호출
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4', //
+        messages: [{ role: 'system', content: enhancedPrompt }],
+        max_tokens: 500, // 응답 최대 길이 설정
+        temperature: 0.7, // 창의성 조절
+      }),
+    });
 
-    const result = await model.generateContent(enhancedPrompt);
-    const response = await result.response;
-    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.statusText}`);
+    }
 
-    return NextResponse.json({ response: text });
+    const result = await response.json();
+    const responseText =
+      result.choices?.[0]?.message?.content || '응답을 생성할 수 없습니다.';
+
+    return NextResponse.json({ response: responseText });
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || '오류가 발생했습니다.' },
