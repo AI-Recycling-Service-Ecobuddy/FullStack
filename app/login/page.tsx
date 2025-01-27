@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import { GoogleSignInButton, LoginForm } from '@/src/features/auth';
+import { LoginForm } from '@/src/features/auth';
+import GoogleSignInButton from '@/src/features/auth/ui/GoogleSignInButton';
 
 export default function LoginPage() {
   return (
