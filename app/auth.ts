@@ -1,8 +1,8 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
 import Google from 'next-auth/providers/google';
-import User from '../models/user'
+import User from '../src/features/auth/model/userModel';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -12,38 +12,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     Credentials({
       credentials: {
-        email: { label: "email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            throw new Error("Missing credentials");
+            throw new Error('Missing credentials');
           }
 
           const user = await User.findOne({ email: credentials.email });
 
           if (!user) {
-            throw new Error("Invalid email");
+            throw new Error('Invalid email');
           }
 
           const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,  
-            user.password
+            credentials.password as string,
+            user.password,
           );
 
           if (!isPasswordValid) {
-            throw new Error("Invalid password");
+            throw new Error('Invalid password');
           }
 
           return {
             id: user._id.toString(),
             email: user.email,
-            name: user.name
-          }
+            name: user.name,
+          };
         } catch (error) {
-           console.error('Auth error:', error);
-           throw new Error("Login Error");
+          console.error('Auth error:', error);
+          throw new Error('Login Error');
         }
       },
     }),
@@ -63,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   pages: {
     signIn: '/login',

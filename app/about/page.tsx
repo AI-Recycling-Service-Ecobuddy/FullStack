@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import ContactButton from './_components/ContactButton';
+import ContactButton from '../../src/shared/ui/ContactButton';
 
 export default function About() {
   return (

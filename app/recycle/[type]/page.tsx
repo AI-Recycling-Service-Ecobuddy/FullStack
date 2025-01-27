@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import DetailLink from '../_components/DetailLink';
+import DetailLink from '../../../src/features/recycle/ui/DetailLink';
 
 export default function RecyclePages() {
   return (

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '../auth';
-import Chat from './_components/Chat';
+import Chat from '../../src/features/chatbot/ui/Chat';
 
 export default async function ChatBotPage() {
   const session = await auth();
