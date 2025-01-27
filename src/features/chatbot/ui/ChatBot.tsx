@@ -59,7 +59,7 @@ export default function ChatBot() {
         <div className='mt-2 max-h-96 w-96 rounded-lg bg-white p-4 shadow-lg'>
           <div className='flex flex-col'>
             <h1 className='mb-2 text-center text-xl font-semibold text-gray-800'>
-              AI 재활용 Chatbot
+              AI 재활용 챗봇
             </h1>
             <div className='mb-4 max-h-64 flex-1 space-y-2 overflow-y-auto'>
               {messages.map((message, index) => (
