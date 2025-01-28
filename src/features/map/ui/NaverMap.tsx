@@ -7,7 +7,7 @@ import { getTrashCanInfo } from '../api/getTrashCanInfo';
 interface Marker {
   address: string;
   location: string;
-  imageUrl: string;
+  title: string;
 }
 
 export default function NaverMap() {
@@ -57,7 +57,7 @@ export default function NaverMap() {
         const formattedMarkers = res.map((item: any) => ({
           address: item.address,
           location: item.location,
-          imageUrl: item.imgUrl || '/default-image.png',
+          title: item.title,
         }));
         setMarkers(formattedMarkers);
       } catch (error) {

@@ -16,7 +16,7 @@ export async function GET() {
     const markers = res.data.data.map((item: any) => ({
       address: `대구광역시 ${item['도로명 주소']}`,
       location: item['행정동'],
-      imgUrl: '',
+      title: '수성구 쓰레기통',
     }));
 
     return NextResponse.json(markers);
