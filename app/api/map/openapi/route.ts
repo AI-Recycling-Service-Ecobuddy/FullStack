@@ -43,6 +43,16 @@ export async function GET() {
       },
     );
 
+    // 남구 데이터 가져오기
+    const namGuResponse = await axios.get(
+      'https://api.odcloud.kr/api/15086945/v1/uddi:ad8e61a7-bf05-43fd-9091-c2ed8a32e8e1',
+      {
+        headers: {
+          Authorization: `Infuser ${process.env.OPEN_API_DECODE_KEY}`,
+        },
+      },
+    );
+
     // 달서구 데이터 가져오기
     const dalseoGuResponse = await axios.get(
       'https://api.odcloud.kr/api/15127543/v1/uddi:eef5a58d-68ed-4453-a217-dcea4fe2cb6d',
@@ -74,7 +84,13 @@ export async function GET() {
     const dongGuMarkers = dongGuResponse.data.data.map((item: any) => ({
       address: item['설치위치 도로명주소'],
       location: item['위치명'],
-      title: '동동구 쓰레기통',
+      title: '동구 쓰레기통',
+    }));
+
+    const namGuMarkers = namGuResponse.data.data.map((item: any) => ({
+      address: item['설치위치 도로명주소'],
+      location: item['위치명'],
+      title: '동구 쓰레기통',
     }));
 
     const dalseoGuMarkers = dalseoGuResponse.data.data.map((item: any) => ({
@@ -88,6 +104,7 @@ export async function GET() {
       ...jungGuMarkers,
       ...seoGuMarkers,
       ...dongGuMarkers,
+      ...namGuMarkers,
       ...dalseoGuMarkers,
     ];
 
