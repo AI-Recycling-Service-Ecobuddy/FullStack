@@ -81,7 +81,7 @@ export default function NaverMap() {
         map: mapInstance,
         position: new window.naver.maps.LatLng(37.5665, 126.978),
         icon: {
-          url: '/map/current-location.webp',
+          url: '/map/user.webp',
           size: new window.naver.maps.Size(36, 36),
           scaledSize: new window.naver.maps.Size(36, 36),
           anchor: new window.naver.maps.Point(18, 18),
@@ -116,11 +116,12 @@ export default function NaverMap() {
               });
 
               const infoWindowContent = `
-                <div style="width:400px; text-align:center; padding:10px; border-radius:10px; background-color: white; box-shadow: 0px 0px 5px rgba(0,0,0,0.3);">
-                  <h3 style="margin: 0 0 10px; font-size: 20px; font-weight: bold;">${marker.location}</h3>
-                  <p style="margin-bottom: 10px; font-size: 16px; color: #555;">${marker.address}</p>
-                </div>
-              `;
+              <div style="width:400px; text-align:center; padding:10px; border-radius:10px; background-color: white; box-shadow: 0px 0px 5px rgba(0,0,0,0.3);">
+                <h3 style="margin: 0 0 10px; font-size: 20px; font-weight: bold;">${marker.title}</h3>
+                <p style="margin-bottom: 10px; font-size: 16px; color: #555;">${marker.location}</p>
+                <p style="margin-bottom: 0; font-size: 14px; color: #777;">${marker.address}</p>
+              </div>
+            `;
 
               const infoWindow = new window.naver.maps.InfoWindow({
                 content: infoWindowContent,
