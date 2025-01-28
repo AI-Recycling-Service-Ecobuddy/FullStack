@@ -99,7 +99,7 @@ export default function NaverMap() {
                   parseFloat(y),
                   parseFloat(x),
                 ),
-                map: mapInstance,
+                map: mapInstance, // 지도에 마커 추가
               });
 
               const infoWindowContent = `
