@@ -18,7 +18,7 @@ export default function Navbar() {
           className='rounded-full bg-red-400'
         />
       </Link>
-      <div className='flex w-full items-center justify-center pr-[20px]'>
+      <div className='flex w-full items-center justify-center pr-[40px]'>
         <NavbarLinks />
       </div>
       <Toggle />

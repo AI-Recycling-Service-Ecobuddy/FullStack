@@ -1,5 +1,5 @@
-import { connectMongoDB } from '@/src/shared/lib/mongodb';
 import Board from '@/src/entities/board/model/board';
+import { connectMongoDB } from '@/src/shared/lib/mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
