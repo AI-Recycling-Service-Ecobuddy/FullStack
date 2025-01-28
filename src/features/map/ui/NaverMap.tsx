@@ -110,8 +110,8 @@ export default function NaverMap() {
 
               const infoWindowContent = `
               <div style="width:400px; text-align:center; padding:10px; border-radius:10px; background-color: white; box-shadow: 0px 0px 5px rgba(0,0,0,0.3); position: relative;">
-                <button id="close-btn" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">&times;</button>
-                <h3 style="margin: 20px 0 10px; font-size: 20px; font-weight: bold;">${marker.title}</h3>
+                <button id="close-btn" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">X</button>
+                <h3 style="margin: 10px 0 10px; font-size: 20px; font-weight: bold;">${marker.title}</h3>
                 <p style="margin-bottom: 10px; font-size: 16px; color: #555;">${marker.location}</p>
                 <p style="margin-bottom: 0; font-size: 14px; color: #777;">${marker.address}</p>
               </div>
