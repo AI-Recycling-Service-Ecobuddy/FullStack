@@ -33,6 +33,16 @@ export async function GET() {
       },
     );
 
+    // 동구 데이터 가져오기
+    const dongGuResponse = await axios.get(
+      'https://api.odcloud.kr/api/15127640/v1/uddi:e0324be9-0563-4f52-8547-e7057feb5010',
+      {
+        headers: {
+          Authorization: `Infuser ${process.env.OPEN_API_DECODE_KEY}`,
+        },
+      },
+    );
+
     // 달서구 데이터 가져오기
     const dalseoGuResponse = await axios.get(
       'https://api.odcloud.kr/api/15127543/v1/uddi:eef5a58d-68ed-4453-a217-dcea4fe2cb6d',
@@ -61,6 +71,12 @@ export async function GET() {
       title: '서구 쓰레기통',
     }));
 
+    const dongGuMarkers = dongGuResponse.data.data.map((item: any) => ({
+      address: item['설치위치 도로명주소'],
+      location: item['위치명'],
+      title: '동동구 쓰레기통',
+    }));
+
     const dalseoGuMarkers = dalseoGuResponse.data.data.map((item: any) => ({
       address: `대구광역시 달서구 ${item['설치위치(도로명주소)']}`,
       location: item['세부위치'],
@@ -71,6 +87,7 @@ export async function GET() {
       ...suseongGuMarkers,
       ...jungGuMarkers,
       ...seoGuMarkers,
+      ...dongGuMarkers,
       ...dalseoGuMarkers,
     ];
 
