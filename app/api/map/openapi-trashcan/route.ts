@@ -82,7 +82,7 @@ export async function GET() {
     }));
 
     const dongGuMarkers = dongGuResponse.data.data.map((item: any) => ({
-      address: item['설치위치 도로명주소'],
+      address: item['설치위치 지번주소'],
       location: item['위치명'],
       title: '동구 쓰레기통',
     }));
