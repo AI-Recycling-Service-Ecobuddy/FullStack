@@ -88,9 +88,9 @@ export async function GET() {
     }));
 
     const namGuMarkers = namGuResponse.data.data.map((item: any) => ({
-      address: item['설치위치 도로명주소'],
-      location: item['위치명'],
-      title: '동구 쓰레기통',
+      address: `대구광역시 남구 ${item['설치위치']}`,
+      location: item['설치위치'],
+      title: '남구 쓰레기통',
     }));
 
     const dalseoGuMarkers = dalseoGuResponse.data.data.map((item: any) => ({
