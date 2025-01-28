@@ -100,12 +100,6 @@ export default function NaverMap() {
                   parseFloat(x),
                 ),
                 map: mapInstance,
-                icon: {
-                  url: '/map/marker.webp',
-                  size: new window.naver.maps.Size(48, 48),
-                  scaledSize: new window.naver.maps.Size(48, 48),
-                  anchor: new window.naver.maps.Point(24, 48),
-                },
               });
 
               const infoWindowContent = `
