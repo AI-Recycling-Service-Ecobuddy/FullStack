@@ -21,11 +21,11 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <AuthProvider>
-          <main className='mt-[70px]'>
+          <div className='pt-[70px]'>
             <Navbar />
             <ChatBot />
-            {children}
-          </main>
+            <main className='h-[calc(100vh-70px)]'>{children}</main>
+          </div>
         </AuthProvider>
       </body>
     </html>
