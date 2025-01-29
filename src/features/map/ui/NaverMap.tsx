@@ -99,13 +99,7 @@ export default function NaverMap() {
                   parseFloat(y),
                   parseFloat(x),
                 ),
-                map: mapInstance,
-                icon: {
-                  url: '/map/marker.webp',
-                  size: new window.naver.maps.Size(48, 48),
-                  scaledSize: new window.naver.maps.Size(48, 48),
-                  anchor: new window.naver.maps.Point(24, 48),
-                },
+                map: mapInstance, // 지도에 마커 추가
               });
 
               const infoWindowContent = `

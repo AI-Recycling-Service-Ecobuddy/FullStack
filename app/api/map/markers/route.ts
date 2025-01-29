@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import { connectMongoDB } from '@/src/shared/lib/mongodb';
+import Marker from '@/src/features/map/model/marker';
 
 export async function GET() {
   try {
+    await connectMongoDB();
+
+    // MongoDB에서 사용자 마커 가져오기
+    const userMarkers = await Marker.find({});
+
     const apiEndpoints = [
       {
         url: 'https://api.odcloud.kr/api/15127636/v1/uddi:b8d629cb-49a1-4dc7-aec8-924057cb0738',
@@ -60,7 +67,7 @@ export async function GET() {
       },
     ];
 
-    // 병렬 데이터 처리
+    // API 데이터를 병렬로 가져오기
     const responses = await Promise.all(
       apiEndpoints.map((endpoint) =>
         axios
@@ -71,12 +78,17 @@ export async function GET() {
           })
           .then((response) => ({
             data: response.data.data.map(endpoint.mapping),
-          })),
+          }))
+          .catch((error) => {
+            console.error(`Error fetching data from ${endpoint.url}:`, error);
+            return { data: [] }; // 오류 발생 시 빈 배열 반환
+          }),
       ),
     );
 
-    // 모든 마커 병합
-    const markers = responses.flatMap((response) => response.data);
+    // 모든 마커 데이터 병합 (사용자 마커 포함)
+    const apiMarkers = responses.flatMap((response) => response.data);
+    const markers = [...userMarkers, ...apiMarkers];
 
     return NextResponse.json(markers);
   } catch (error) {
