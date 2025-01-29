@@ -2,7 +2,7 @@ import mongoose, { models, Schema } from 'mongoose';
 
 const MapSchema = new Schema(
   {
-    imgUrl: {
+    title: {
       type: String,
       required: true,
     },
