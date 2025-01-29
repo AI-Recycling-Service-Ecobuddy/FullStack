@@ -2,13 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Script from 'next/script';
-import { getTrashCanInfo } from '../api/getTrashCanInfo';
-
-interface Marker {
-  address: string;
-  location: string;
-  title: string;
-}
+import { Marker } from '../model/types';
+import { getMarkers } from '../api/getMarkers';
 
 export default function NaverMap() {
   const [naverMapLoaded, setNaverMapLoaded] = useState(false);
@@ -46,7 +41,7 @@ export default function NaverMap() {
   useEffect(() => {
     const getMarkerInfo = async () => {
       try {
-        const res = await getTrashCanInfo();
+        const res = await getMarkers();
         const formattedMarkers = res.map((item: any) => ({
           address: item.address,
           location: item.location,
