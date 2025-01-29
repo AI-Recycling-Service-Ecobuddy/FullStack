@@ -47,7 +47,7 @@ export default function ChatBot() {
   }, [messages]);
 
   return (
-    <div className='fixed right-8 bottom-10 z-50'>
+    <div className='fixed right-4 bottom-10 z-50'>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className='rounded-full bg-blue-500 p-6 text-white shadow-lg transition duration-200 hover:scale-110 hover:bg-blue-600 focus:ring focus:ring-blue-300 focus:outline-none'
