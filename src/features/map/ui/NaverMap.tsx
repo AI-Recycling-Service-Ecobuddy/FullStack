@@ -2,30 +2,122 @@
 
 import React, { useEffect, useState } from 'react';
 import Script from 'next/script';
+import { useMarkersQuery } from '../hooks/useMarkersQuery';
 import { Marker } from '../model/types';
-import { getMarkers } from '../api/getMarkers';
 
 export default function NaverMap() {
   const [naverMapLoaded, setNaverMapLoaded] = useState(false);
-  const [markers, setMarkers] = useState<Marker[]>([]);
   const [map, setMap] = useState<any>(null);
   const [currentPositionMarker, setCurrentPositionMarker] = useState<any>(null);
 
+  const { data: markers, isLoading, error } = useMarkersQuery();
+
   useEffect(() => {
-    // 사용자의 현재 위치를 추적
+    if (isLoading || error || !markers || !naverMapLoaded || !window.naver)
+      return;
+
+    const mapOptions = {
+      center: new window.naver.maps.LatLng(37.5665, 126.978), // 기본 중심 위치 (서울)
+      zoom: 12,
+    };
+
+    const mapInstance = new window.naver.maps.Map('map', mapOptions);
+    setMap(mapInstance);
+
+    // 현재 위치 가져오기 및 마커 추가
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const userLocation = new window.naver.maps.LatLng(
+            latitude,
+            longitude,
+          );
+
+          const positionMarker = new window.naver.maps.Marker({
+            map: mapInstance,
+            position: userLocation,
+            icon: {
+              url: '/map/user.webp',
+              size: new window.naver.maps.Size(36, 36),
+              scaledSize: new window.naver.maps.Size(36, 36),
+              anchor: new window.naver.maps.Point(18, 18),
+            },
+          });
+
+          setCurrentPositionMarker(positionMarker);
+          mapInstance.setCenter(userLocation);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+        },
+        { enableHighAccuracy: true },
+      );
+    }
+
+    // 마커 추가
+    markers.forEach((marker: Marker) => {
+      window.naver.maps.Service.geocode(
+        { query: marker.address },
+        (status, response) => {
+          if (status === window.naver.maps.Service.Status.ERROR) {
+            console.error('Geocoding Error:', marker.address);
+            return;
+          }
+
+          if (response.v2.addresses.length > 0) {
+            const { x, y } = response.v2.addresses[0];
+
+            const markerInstance = new window.naver.maps.Marker({
+              position: new window.naver.maps.LatLng(
+                parseFloat(y),
+                parseFloat(x),
+              ),
+              map: mapInstance,
+            });
+
+            const infoWindowContent = `
+            <div style="width:400px; text-align:center; padding:10px; border-radius:10px; background-color: white; box-shadow: 0px 0px 5px rgba(0,0,0,0.3); position: relative;">
+              <button id="close-btn" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">X</button>
+              <h3 style="margin: 10px 0 10px; font-size: 20px; font-weight: bold;">${marker.title}</h3>
+              <p style="margin-bottom: 10px; font-size: 16px; color: #555;">${marker.location}</p>
+              <p style="margin-bottom: 0; font-size: 14px; color: #777;">${marker.address}</p>
+            </div>
+            `;
+
+            const infoWindow = new window.naver.maps.InfoWindow({
+              content: infoWindowContent,
+            });
+
+            window.naver.maps.Event.addListener(markerInstance, 'click', () => {
+              infoWindow.open(mapInstance, markerInstance);
+
+              setTimeout(() => {
+                const closeBtn = document.getElementById('close-btn');
+                if (closeBtn) {
+                  closeBtn.addEventListener('click', () => {
+                    infoWindow.close();
+                  });
+                }
+              }, 100);
+            });
+          }
+        },
+      );
+    });
+  }, [naverMapLoaded, isLoading, markers, error]);
+
+  // 사용자의 현재 위치 지속적으로 추적 및 마커 업데이트
+  useEffect(() => {
+    if (!map || !currentPositionMarker) return;
+
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const newPosition = { lat: latitude, lng: longitude };
+        const newPosition = new window.naver.maps.LatLng(latitude, longitude);
 
-        if (map && currentPositionMarker) {
-          const newLatLng = new window.naver.maps.LatLng(
-            newPosition.lat,
-            newPosition.lng,
-          );
-          currentPositionMarker.setPosition(newLatLng);
-          map.setCenter(newLatLng); // 지도 중심 업데이트
-        }
+        currentPositionMarker.setPosition(newPosition);
+        map.setCenter(newPosition);
       },
       (error) => {
         console.error('Error watching position:', error);
@@ -34,121 +126,28 @@ export default function NaverMap() {
     );
 
     return () => {
-      navigator.geolocation.clearWatch(watchId); // 위치 추적 해제
+      navigator.geolocation.clearWatch(watchId);
     };
   }, [map, currentPositionMarker]);
 
-  useEffect(() => {
-    const getMarkerInfo = async () => {
-      try {
-        const res = await getMarkers();
-        const formattedMarkers = res.map((item: any) => ({
-          address: item.address,
-          location: item.location,
-          title: item.title,
-        }));
-        setMarkers(formattedMarkers);
-      } catch (error) {
-        console.error('Error fetching marker info:', error);
-      }
-    };
-    getMarkerInfo();
-  }, []);
-
-  useEffect(() => {
-    if (naverMapLoaded && window.naver) {
-      const mapOptions = {
-        center: new window.naver.maps.LatLng(37.5665, 126.978), // 기본 중심 위치 (서울)
-        zoom: 12,
-      };
-
-      const mapInstance = new window.naver.maps.Map('map', mapOptions);
-      setMap(mapInstance);
-
-      const positionMarker = new window.naver.maps.Marker({
-        map: mapInstance,
-        position: new window.naver.maps.LatLng(37.5665, 126.978),
-        icon: {
-          url: '/map/user.webp',
-          size: new window.naver.maps.Size(36, 36),
-          scaledSize: new window.naver.maps.Size(36, 36),
-          anchor: new window.naver.maps.Point(18, 18),
-        },
-      });
-      setCurrentPositionMarker(positionMarker);
-
-      markers.forEach((marker) => {
-        window.naver.maps.Service.geocode(
-          { query: marker.address },
-          (status, response) => {
-            if (status === window.naver.maps.Service.Status.ERROR) {
-              console.error('Geocoding Error:', marker.address);
-              return;
-            }
-
-            if (response.v2.addresses.length > 0) {
-              const { x, y } = response.v2.addresses[0]; // x: 경도, y: 위도
-
-              const markerInstance = new window.naver.maps.Marker({
-                position: new window.naver.maps.LatLng(
-                  parseFloat(y),
-                  parseFloat(x),
-                ),
-                map: mapInstance, // 지도에 마커 추가
-              });
-
-              const infoWindowContent = `
-              <div style="width:400px; text-align:center; padding:10px; border-radius:10px; background-color: white; box-shadow: 0px 0px 5px rgba(0,0,0,0.3); position: relative;">
-                <button id="close-btn" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">X</button>
-                <h3 style="margin: 10px 0 10px; font-size: 20px; font-weight: bold;">${marker.title}</h3>
-                <p style="margin-bottom: 10px; font-size: 16px; color: #555;">${marker.location}</p>
-                <p style="margin-bottom: 0; font-size: 14px; color: #777;">${marker.address}</p>
-              </div>
-              `;
-
-              const infoWindow = new window.naver.maps.InfoWindow({
-                content: infoWindowContent,
-              });
-
-              window.naver.maps.Event.addListener(
-                markerInstance,
-                'click',
-                () => {
-                  infoWindow.open(mapInstance, markerInstance);
-
-                  // 닫기 버튼 이벤트 처리
-                  setTimeout(() => {
-                    const closeBtn = document.getElementById('close-btn');
-                    if (closeBtn) {
-                      closeBtn.addEventListener('click', () => {
-                        infoWindow.close();
-                      });
-                    }
-                  }, 100);
-                },
-              );
-            }
-          },
-        );
-      });
-    }
-  }, [naverMapLoaded, markers]);
-
   return (
     <div className='relative h-full w-full'>
-      {/* 네이버 지도 스크립트 로드 */}
       <Script
         src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&submodules=geocoder`}
         onLoad={() => setNaverMapLoaded(true)}
         strategy='lazyOnload'
       />
-      <div id='map' className='h-full w-full'>
-        {!naverMapLoaded && (
-          <div className='flex h-full w-full items-center justify-center'>
-            Loading map...
-          </div>
-        )}
-      </div>
+      {isLoading ? (
+        <div className='flex h-full w-full items-center justify-center text-lg font-semibold'>
+          Loading map...
+        </div>
+      ) : error ? (
+        <div className='flex h-full w-full items-center justify-center text-red-500'>
+          Error loading markers: {error.message}
+        </div>
+      ) : (
+        <div id='map' className='h-full w-full' />
+      )}
     </div>
   );
 }

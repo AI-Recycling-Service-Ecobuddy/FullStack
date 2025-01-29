@@ -3,3 +3,4 @@ export { default as NewMarkerForm } from './ui/NewMarkerForm';
 export { postMarker } from './api/postMarker';
 export * from './model/marker';
 export * from './model/types';
+export * from './hooks/useMarkersQuery';
