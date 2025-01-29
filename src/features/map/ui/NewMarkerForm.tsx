@@ -1,14 +1,43 @@
+'use client';
+
+import { useState } from 'react';
+import { postMarker } from '../api/postMarker';
+
 export default function NewMarkerForm() {
+  const [formData, setFormData] = useState({
+    title: '',
+    location: '',
+    address: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await postMarker(formData);
+      alert('마커가 추가되었습니다.');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className='flex h-[220px] w-full flex-col items-center'>
       <h2 className='mt-1 text-2xl font-bold'>마커 추가하기</h2>
-      <form className='mt-4 flex w-2/3 flex-col'>
+      <form onSubmit={handleSubmit} className='mt-4 flex w-2/3 flex-col'>
         <section className='flex w-full items-center justify-between'>
           <div className='flex w-1/2 items-center pr-2 whitespace-nowrap'>
             <label htmlFor='title' className='mr-2 text-lg font-bold'>
               제목
             </label>
             <input
+              onChange={handleChange}
               type='text'
               id='title'
               name='title'
@@ -20,6 +49,7 @@ export default function NewMarkerForm() {
               세부 위치
             </label>
             <input
+              onChange={handleChange}
               type='text'
               id='location'
               name='location'
@@ -32,6 +62,7 @@ export default function NewMarkerForm() {
             주소
           </label>
           <input
+            onChange={handleChange}
             type='text'
             id='address'
             name='address'

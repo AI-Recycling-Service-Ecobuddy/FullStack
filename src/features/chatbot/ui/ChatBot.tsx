@@ -47,10 +47,10 @@ export default function ChatBot() {
   }, [messages]);
 
   return (
-    <div className='fixed bottom-10 right-10 z-50'>
+    <div className='fixed right-8 bottom-10 z-50'>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className='rounded-full bg-blue-500 p-6 text-white shadow-lg transition duration-200 hover:scale-110 hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300'
+        className='rounded-full bg-blue-500 p-6 text-white shadow-lg transition duration-200 hover:scale-110 hover:bg-blue-600 focus:ring focus:ring-blue-300 focus:outline-none'
       >
         {isOpen ? '닫기' : 'AI 챗봇'}
       </button>
@@ -96,7 +96,7 @@ export default function ChatBot() {
               />
               <button
                 type='submit'
-                className='rounded-md bg-blue-500 px-3 py-2 text-sm text-white transition hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-50'
+                className='rounded-md bg-blue-500 px-3 py-2 text-sm text-white transition hover:bg-blue-600 focus:ring focus:ring-blue-300 focus:outline-none disabled:opacity-50'
                 disabled={loading}
               >
                 {loading ? '전송 중...' : '전송'}

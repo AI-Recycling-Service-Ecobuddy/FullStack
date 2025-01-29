@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '../auth';
-import NaverMap from '@/src/features/map/ui/NaverMap';
-import NewMarkerForm from '@/src/features/map/ui/NewMarkerForm';
+import { NaverMap, NewMarkerForm } from '@/src/features/map';
 
 export default async function MapPage() {
   const session = await auth();
