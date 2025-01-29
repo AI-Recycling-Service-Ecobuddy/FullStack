@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import { connectMongoDB } from '@/src/shared/lib/mongodb';
-import Marker from '@/src/features/map/model/marker';
+import MarkerModel from '@/src/features/map/model/markerModel';
 
 export async function GET() {
   try {
     await connectMongoDB();
 
     // MongoDB에서 사용자 마커 가져오기
-    const userMarkers = await Marker.find({});
+    const userMarkers = await MarkerModel.find({});
 
     const apiEndpoints = [
       {
@@ -97,5 +97,30 @@ export async function GET() {
       { error: 'Failed to fetch data' },
       { status: 500 },
     );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    await connectMongoDB();
+
+    const { address, location, title } = await req.json();
+
+    if (!address || !location || !title) {
+      return NextResponse.json(
+        { error: 'All fields (address, location, title) are required' },
+        { status: 400 },
+      );
+    }
+
+    const newMarker = await MarkerModel.create({ address, location, title });
+
+    return NextResponse.json(
+      { message: 'Marker datas saved successfully', data: newMarker },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error('Error saving data:', error);
+    return NextResponse.json({ error: 'Failed to save data' }, { status: 500 });
   }
 }

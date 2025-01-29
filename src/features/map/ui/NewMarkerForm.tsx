@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { postMarker } from '../api/postMarker';
+import { useMarkerMutation } from '../hooks/useMarkerMutation';
 
 export default function NewMarkerForm() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ export default function NewMarkerForm() {
     location: '',
     address: '',
   });
+
+  const { mutate, isPending, isError } = useMarkerMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -20,7 +23,7 @@ export default function NewMarkerForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await postMarker(formData);
+      await mutate(formData);
       alert('마커가 추가되었습니다.');
     } catch (err) {
       console.error(err);
@@ -30,6 +33,9 @@ export default function NewMarkerForm() {
   return (
     <div className='flex h-[220px] w-full flex-col items-center'>
       <h2 className='mt-1 text-2xl font-bold'>마커 추가하기</h2>
+      {isPending && (
+        <div className='mt-2 font-bold text-blue-500'>마커 추가 중...</div>
+      )}
       <form onSubmit={handleSubmit} className='mt-4 flex w-2/3 flex-col'>
         <section className='flex w-full items-center justify-between'>
           <div className='flex w-1/2 items-center pr-2 whitespace-nowrap'>
@@ -70,10 +76,11 @@ export default function NewMarkerForm() {
           />
         </section>
         <button
+          disabled={isPending}
           type='submit'
           className='mt-4 cursor-pointer rounded-md bg-blue-500 py-2 font-bold text-white hover:bg-blue-600'
         >
-          추가하기
+          {isPending ? '추가 중...' : '추가하기'}
         </button>
       </form>
     </div>
