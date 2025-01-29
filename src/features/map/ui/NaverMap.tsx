@@ -9,6 +9,7 @@ export default function NaverMap() {
   const [naverMapLoaded, setNaverMapLoaded] = useState(false);
   const [map, setMap] = useState<any>(null);
   const [currentPositionMarker, setCurrentPositionMarker] = useState<any>(null);
+  const [userLocation, setUserLocation] = useState<any>(null); // 현위치 저장
 
   const { data: markers, isLoading, error } = useMarkersQuery();
 
@@ -24,19 +25,20 @@ export default function NaverMap() {
     const mapInstance = new window.naver.maps.Map('map', mapOptions);
     setMap(mapInstance);
 
-    // 현재 위치 가져오기 및 마커 추가
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          const userLocation = new window.naver.maps.LatLng(
+          const initialLocation = new window.naver.maps.LatLng(
             latitude,
             longitude,
           );
 
+          setUserLocation(initialLocation); // 처음 받은 현위치 저장
+
           const positionMarker = new window.naver.maps.Marker({
             map: mapInstance,
-            position: userLocation,
+            position: initialLocation,
             icon: {
               url: '/map/user.webp',
               size: new window.naver.maps.Size(36, 36),
@@ -46,7 +48,7 @@ export default function NaverMap() {
           });
 
           setCurrentPositionMarker(positionMarker);
-          mapInstance.setCenter(userLocation);
+          mapInstance.setCenter(initialLocation);
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -68,38 +70,12 @@ export default function NaverMap() {
           if (response.v2.addresses.length > 0) {
             const { x, y } = response.v2.addresses[0];
 
-            const markerInstance = new window.naver.maps.Marker({
+            new window.naver.maps.Marker({
               position: new window.naver.maps.LatLng(
                 parseFloat(y),
                 parseFloat(x),
               ),
               map: mapInstance,
-            });
-
-            const infoWindowContent = `
-            <div style="width:400px; text-align:center; padding:10px; border-radius:10px; background-color: white; box-shadow: 0px 0px 5px rgba(0,0,0,0.3); position: relative;">
-              <button id="close-btn" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">X</button>
-              <h3 style="margin: 10px 0 10px; font-size: 20px; font-weight: bold;">${marker.title}</h3>
-              <p style="margin-bottom: 10px; font-size: 16px; color: #555;">${marker.location}</p>
-              <p style="margin-bottom: 0; font-size: 14px; color: #777;">${marker.address}</p>
-            </div>
-            `;
-
-            const infoWindow = new window.naver.maps.InfoWindow({
-              content: infoWindowContent,
-            });
-
-            window.naver.maps.Event.addListener(markerInstance, 'click', () => {
-              infoWindow.open(mapInstance, markerInstance);
-
-              setTimeout(() => {
-                const closeBtn = document.getElementById('close-btn');
-                if (closeBtn) {
-                  closeBtn.addEventListener('click', () => {
-                    infoWindow.close();
-                  });
-                }
-              }, 100);
             });
           }
         },
@@ -107,17 +83,18 @@ export default function NaverMap() {
     });
   }, [naverMapLoaded, isLoading, markers, error]);
 
-  // 사용자의 현재 위치 지속적으로 추적 및 마커 업데이트
+  // 사용자의 현재 위치 지속적으로 추적
   useEffect(() => {
     if (!map || !currentPositionMarker) return;
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const newPosition = new window.naver.maps.LatLng(latitude, longitude);
+        const newLocation = new window.naver.maps.LatLng(latitude, longitude);
 
-        currentPositionMarker.setPosition(newPosition);
-        map.setCenter(newPosition);
+        setUserLocation(newLocation); // ✅ 위치 업데이트
+        currentPositionMarker.setPosition(newLocation);
+        map.setCenter(newLocation);
       },
       (error) => {
         console.error('Error watching position:', error);
@@ -129,6 +106,22 @@ export default function NaverMap() {
       navigator.geolocation.clearWatch(watchId);
     };
   }, [map, currentPositionMarker]);
+
+  // 저장된 현 위치로 즉시 이동하는 함수
+  const moveToCurrentLocation = () => {
+    if (!map) {
+      alert('지도 로딩 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    if (userLocation) {
+      console.log('저장된 현재 위치로 이동:', userLocation);
+      map.setCenter(userLocation);
+      currentPositionMarker?.setPosition(userLocation);
+    } else {
+      alert('현재 위치 정보가 없습니다.');
+    }
+  };
 
   return (
     <div className='relative h-full w-full'>
@@ -146,7 +139,16 @@ export default function NaverMap() {
           Error loading markers: {error.message}
         </div>
       ) : (
-        <div id='map' className='h-full w-full' />
+        <>
+          <div id='map' className='h-full w-full' />
+          {/* ✅ 현위치로 이동 버튼 */}
+          <button
+            onClick={moveToCurrentLocation}
+            className='absolute right-5 bottom-5 z-10 rounded-lg bg-blue-500 px-4 py-2 font-bold text-white shadow-lg transition hover:bg-blue-600'
+          >
+            현위치로 이동
+          </button>
+        </>
       )}
     </div>
   );
