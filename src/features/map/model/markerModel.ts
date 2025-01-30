@@ -1,4 +1,4 @@
-import mongoose, { models, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const MapSchema = new Schema(
   {
@@ -21,6 +21,6 @@ const MapSchema = new Schema(
   },
 );
 
-const Marker = mongoose.models.Map || mongoose.model('Map', MapSchema);
+const MarkerModel = mongoose.models.Map || mongoose.model('Map', MapSchema);
 
-export default Marker;
+export default MarkerModel;
