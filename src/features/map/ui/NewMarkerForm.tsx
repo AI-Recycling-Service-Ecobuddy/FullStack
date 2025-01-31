@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { postMarker } from '../api/postMarker';
 import { useMarkerMutation } from '../hooks/useMarkerMutation';
 
 export default function NewMarkerForm() {

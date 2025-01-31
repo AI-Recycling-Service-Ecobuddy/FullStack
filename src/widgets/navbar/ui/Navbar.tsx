@@ -12,8 +12,6 @@ export default function Navbar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  console.log('세션@@@@@@@@@@@@@', session);
-
   return (
     <nav className='fixed top-0 left-0 z-50 flex h-[70px] w-full items-center justify-between bg-emerald-600 px-6'>
       {/* 로고 */}
