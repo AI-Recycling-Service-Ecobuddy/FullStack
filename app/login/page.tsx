@@ -4,7 +4,7 @@ import GoogleSignInButton from '@/src/features/auth/ui/GoogleSignInButton';
 
 export default function LoginPage() {
   return (
-    <div className='relative flex h-screen items-center justify-center'>
+    <div className='relative flex h-full items-center justify-center'>
       <Image
         src='/nature.webp'
         fill
