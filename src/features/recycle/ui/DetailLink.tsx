@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
@@ -20,34 +20,30 @@ interface DetailProps {
 export default function DetailLink() {
   const { title, imgUrl } = useCategoryStore();
   const [detail, setDetail] = useState<DetailProps[]>([]);
-
   const params = useParams();
   const type = decodeURIComponent(params.type as string);
 
   const { setTitle, setType, setImgUrl, setContext, setSubContext } =
     useRecycleStore();
 
-  const onClick = (item: DetailProps) => {
-    setTitle(item.title);
-    setType(item.type);
-    setImgUrl(item.imgUrl);
-    setContext(item.context);
-    setSubContext(item.subcontext);
-  };
+  const onClick = useCallback(
+    (item: DetailProps) => {
+      setTitle(item.title);
+      setType(item.type);
+      setImgUrl(item.imgUrl);
+      setContext(item.context);
+      setSubContext(item.subcontext);
+    },
+    [setTitle, setType, setImgUrl, setContext, setSubContext],
+  );
 
   useEffect(() => {
     const getDetailRecycle = async () => {
       try {
-        const res = await axios.get(`/api/recycledetail?type=${type}`);
-        if (res.data) {
-          setDetail(res.data);
-        } else {
-          console.error('Recycle detail data not found');
-          setDetail([]);
-        }
+        const { data } = await axios.get(`/api/recycledetail?type=${type}`);
+        if (data) setDetail(data);
       } catch (error) {
-        console.error('Error fetching detail data:', error);
-        setDetail([]);
+        console.error('Error fetching recycle details:', error);
       }
     };
 
@@ -70,6 +66,7 @@ export default function DetailLink() {
           />
         )}
       </div>
+
       <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2'>
         {detail.map((item) => (
           <Link
