@@ -5,11 +5,15 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { RecycleDetail } from '../model/types';
 import { getRecycleDetails } from '../api/getRecycleDetails';
+import { useCategoryStore } from '../../recycle/model/categoryStore';
+import { useRecycleStore } from '../../recycle/model/useRecycleDetailStore';
 
 export default function SearchBar() {
   const [allRecycle, setAllRecycle] = useState<RecycleDetail[]>([]);
   const [searchItem, setSearchItem] = useState('');
   const [filteredData, setFilteredData] = useState<RecycleDetail[]>([]);
+  const { setTitle, setType, setImgUrl, setSubContext, setContext } =
+    useRecycleStore();
   const router = useRouter();
 
   const handleSearch = () => {
@@ -19,8 +23,13 @@ export default function SearchBar() {
     setFilteredData(filtered);
   };
 
-  const handleItemClick = (id: number) => {
-    router.push(`/recycle/detail/${id}`);
+  const handleItemClick = (item: RecycleDetail) => {
+    setTitle(item.title);
+    setType(item.type);
+    setImgUrl(item.imgUrl);
+    setContext(item.context);
+    setSubContext(item.subcontext);
+    router.push(`/recycle/${item.type}/${item.title}`);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -69,7 +78,7 @@ export default function SearchBar() {
             <div
               key={item.id}
               className='mb-4 cursor-pointer rounded-lg border p-4 hover:bg-gray-100'
-              onClick={() => handleItemClick(item.id)}
+              onClick={() => handleItemClick(item)}
             >
               <h2 className='mb-2 text-xl font-bold'>{item.title}</h2>
               <Image

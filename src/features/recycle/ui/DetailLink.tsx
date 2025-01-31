@@ -1,12 +1,12 @@
 'use client';
 
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { useCategoryStore } from '@/src/features/recycle/model/categoryStore';
-import { useRecycleStore } from '@/src/features/recycle/model/recycleDetailStore';
+import { useRecycleStore } from '@/src/features/recycle/model/useRecycleDetailStore';
 
 interface DetailProps {
   _id: string;
@@ -20,34 +20,30 @@ interface DetailProps {
 export default function DetailLink() {
   const { title, imgUrl } = useCategoryStore();
   const [detail, setDetail] = useState<DetailProps[]>([]);
-
   const params = useParams();
   const type = decodeURIComponent(params.type as string);
 
   const { setTitle, setType, setImgUrl, setContext, setSubContext } =
     useRecycleStore();
 
-  const onClick = (item: DetailProps) => {
-    setTitle(item.title);
-    setType(item.type);
-    setImgUrl(item.imgUrl);
-    setContext(item.context);
-    setSubContext(item.subcontext);
-  };
+  const onClick = useCallback(
+    (item: DetailProps) => {
+      setTitle(item.title);
+      setType(item.type);
+      setImgUrl(item.imgUrl);
+      setContext(item.context);
+      setSubContext(item.subcontext);
+    },
+    [setTitle, setType, setImgUrl, setContext, setSubContext],
+  );
 
   useEffect(() => {
     const getDetailRecycle = async () => {
       try {
-        const res = await axios.get(`/api/recycledetail?type=${type}`);
-        if (res.data) {
-          setDetail(res.data);
-        } else {
-          console.error('Recycle detail data not found');
-          setDetail([]);
-        }
+        const { data } = await axios.get(`/api/recycledetail?type=${type}`);
+        if (data) setDetail(data);
       } catch (error) {
-        console.error('Error fetching detail data:', error);
-        setDetail([]);
+        console.error('Error fetching recycle details:', error);
       }
     };
 
@@ -55,7 +51,7 @@ export default function DetailLink() {
   }, [type]);
 
   return (
-    <div className='z-20 mx-auto overflow-hidden rounded-xl bg-white p-8 shadow-lg'>
+    <div className='z-20 mx-auto w-2/3 overflow-hidden rounded-xl bg-white p-8 shadow-lg'>
       <div className='mb-6 flex flex-col items-center justify-between md:flex-row'>
         <h1 className='mb-[20px] text-3xl font-bold text-green-800 md:mb-0'>
           {title}
@@ -70,6 +66,7 @@ export default function DetailLink() {
           />
         )}
       </div>
+
       <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2'>
         {detail.map((item) => (
           <Link
