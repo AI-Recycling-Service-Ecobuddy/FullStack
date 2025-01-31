@@ -17,7 +17,7 @@ export default function DetailPages() {
       />
 
       <div className='relative z-10 w-2/3 overflow-hidden rounded-lg bg-white shadow-lg'>
-        <div className='relative h-96 lg:h-[550px]'>
+        <div className='relative h-auto max-h-[75vh] min-h-80 lg:min-h-[550px]'>
           {imgUrl && (
             <Image src={imgUrl} alt={title} fill className='object-cover' />
           )}
