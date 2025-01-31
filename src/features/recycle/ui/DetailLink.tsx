@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { useCategoryStore } from '@/src/features/recycle/model/categoryStore';
-import { useRecycleStore } from '@/src/features/recycle/model/recycleDetailStore';
+import { useRecycleStore } from '@/src/features/recycle/model/useRecycleDetailStore';
 
 interface DetailProps {
   _id: string;
