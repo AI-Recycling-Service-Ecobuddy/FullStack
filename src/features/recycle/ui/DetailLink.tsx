@@ -51,7 +51,7 @@ export default function DetailLink() {
   }, [type]);
 
   return (
-    <div className='z-20 mx-auto overflow-hidden rounded-xl bg-white p-8 shadow-lg'>
+    <div className='z-20 mx-auto w-2/3 overflow-hidden rounded-xl bg-white p-8 shadow-lg'>
       <div className='mb-6 flex flex-col items-center justify-between md:flex-row'>
         <h1 className='mb-[20px] text-3xl font-bold text-green-800 md:mb-0'>
           {title}
