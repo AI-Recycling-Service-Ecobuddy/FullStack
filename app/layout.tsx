@@ -23,11 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <QueryProvider>
           <AuthProvider>
-            <div className='pt-[70px]'>
-              <Navbar />
-              <ChatBot />
-              <main className='h-[calc(100vh-70px)]'>{children}</main>
-            </div>
+            <Navbar />
+            <ChatBot />
+            <main className='h-screen pt-[70px]'>{children}</main>
           </AuthProvider>
         </QueryProvider>
       </body>

@@ -3,7 +3,7 @@ import ContactButton from '../../src/shared/ui/ContactButton';
 
 export default function About() {
   return (
-    <div className='relative flex h-full flex-col items-center bg-gray-50'>
+    <div className='relative flex h-full flex-col items-center justify-center bg-gray-50'>
       <Image
         src='/nature.webp'
         fill
@@ -12,7 +12,7 @@ export default function About() {
         className='object-cover'
       />
 
-      <div className='z-10 mt-[100px] max-w-3xl rounded-lg bg-white/80 p-6 text-center shadow-lg backdrop-blur-lg'>
+      <div className='z-10 max-w-3xl rounded-lg bg-white/80 p-6 text-center shadow-lg backdrop-blur-lg'>
         <div className='mb-[20px] flex justify-center gap-2 text-sm md:text-lg'>
           안녕하세요, 경북대학교 컴퓨터학부{' '}
           <h1 className='font-bold text-green-500'> Eddy </h1> 입니다.
@@ -55,7 +55,7 @@ export default function About() {
         </div>
       </div>
 
-      <div className='relative mt-8'>
+      <div className='relative mt-3'>
         <ContactButton />
       </div>
     </div>
