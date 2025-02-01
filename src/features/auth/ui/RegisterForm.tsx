@@ -22,7 +22,7 @@ export default function RegisterForm() {
     }
 
     try {
-      const res = await axios.post('/api/register2', { name, email, password });
+      const res = await axios.post('/api/register', { name, email, password });
 
       if (res.status === 201) {
         const form = e.target as HTMLFormElement;
@@ -71,7 +71,7 @@ export default function RegisterForm() {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete='current-password'
         />
-        <button className='mt-4 rounded-md bg-green-400 p-1 font-semibold text-white duration-200 hover:bg-green-500'>
+        <button className='mt-4 cursor-pointer rounded-md bg-green-400 p-1 font-semibold text-white duration-200 hover:bg-green-500'>
           가입하기
         </button>
         {error && <div>{error}</div>}
