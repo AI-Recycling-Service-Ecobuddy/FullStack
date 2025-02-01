@@ -30,11 +30,10 @@ export default function LoginForm() {
       });
 
       if (res?.error) {
-        setError('Invalid Credentials');
-        return;
+        setError('이메일 또는 비밀번호가 잘못되었습니다.');
+      } else {
+        router.push('/'); // 로그인 성공 시 홈으로 이동
       }
-
-      router.replace('/dashboard');
     } catch (error) {
       console.log(error);
     }
@@ -42,12 +41,14 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1 className='text-green-500 text-4xl font-serif text-center font-bold mb-4'>EDDY</h1>
-      <div className='flex flex-col p-6 gap-6 '>
+      <h1 className='mb-4 text-center font-serif text-4xl font-bold text-green-500'>
+        EDDY
+      </h1>
+      <div className='flex flex-col gap-6 p-6'>
         <input
           type='email'
           placeholder='email'
-          className='border border-blue-500 pl-2 p-1 rounded-md px-10'
+          className='rounded-md border border-blue-500 p-1 px-10 pl-2'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete='current-email'
@@ -55,19 +56,28 @@ export default function LoginForm() {
         <input
           type='password'
           placeholder='password'
-          className='border border-blue-500 pl-2 p-1 rounded-md px-10'
+          className='rounded-md border border-blue-500 p-1 px-10 pl-2'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete='current-password'
         />
-        <button className='bg-green-400 rounded-md mt-4 p-1 text-white font-semibold hover:bg-green-500 duration-200'>
+        <button className='mt-4 rounded-md bg-green-400 p-1 font-semibold text-white duration-200 hover:bg-green-500'>
           로그인
         </button>
-        {error && <div className='bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2'>{error}</div>}
+        {error && (
+          <div className='mt-2 w-fit rounded-md bg-red-500 px-3 py-1 text-sm text-white'>
+            {error}
+          </div>
+        )}
 
         <div className='flex justify-between'>
-          <p className='text-blue-700 font-semibold text-[14px]'>계정이 없으신가요?</p>
-          <Link href={'/register'} className='text-blue-800 text-[15px] font-bold hover:scale-105'>
+          <p className='text-[14px] font-semibold text-blue-700'>
+            계정이 없으신가요?
+          </p>
+          <Link
+            href={'/register'}
+            className='text-[15px] font-bold text-blue-800 hover:scale-105'
+          >
             가입하기
           </Link>
         </div>

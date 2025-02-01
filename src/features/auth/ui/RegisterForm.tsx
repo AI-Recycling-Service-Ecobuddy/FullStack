@@ -22,7 +22,7 @@ export default function RegisterForm() {
     }
 
     try {
-      const res = await axios.post('/api/register', { name, email, password });
+      const res = await axios.post('/api/register2', { name, email, password });
 
       if (res.status === 201) {
         const form = e.target as HTMLFormElement;

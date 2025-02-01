@@ -1,71 +1,50 @@
 import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
+import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import Google from 'next-auth/providers/google';
-import User from '../src/features/auth/model/userModel';
+import client from '@/src/shared/lib/authMongodb';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: MongoDBAdapter(client),
   providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Credentials({
+    CredentialsProvider({
+      name: 'Credentials',
       credentials: {
-        email: { label: 'email', type: 'email' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        try {
-          if (!credentials?.email || !credentials?.password) {
-            throw new Error('Missing credentials');
-          }
+        const db = client.db();
+        const user = await db
+          .collection('users')
+          .findOne({ email: credentials.email });
 
-          const user = await User.findOne({ email: credentials.email });
+        if (!user) throw new Error('존재하지 않는 이메일입니다.');
 
-          if (!user) {
-            throw new Error('Invalid email');
-          }
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password,
+        );
 
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,
-            user.password,
-          );
+        if (!isPasswordValid) throw new Error('비밀번호가 일치하지 않습니다.');
 
-          if (!isPasswordValid) {
-            throw new Error('Invalid password');
-          }
-
-          return {
-            id: user._id.toString(),
-            email: user.email,
-            name: user.name,
-          };
-        } catch (error) {
-          console.error('Auth error:', error);
-          throw new Error('Login Error');
-        }
+        return { id: user._id.toString(), email: user.email, name: user.name };
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-      }
-      return session;
-    },
-  },
   session: {
     strategy: 'jwt',
+    maxAge: 60 * 60 * 24, // 1일 동안 세션 유지 (사용자 활동이 있으면 세션 유지)
+  },
+  jwt: {
+    maxAge: 60 * 60, // 1시간 (3600초) 동안 JWT 토큰 유지
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login', // 커스텀 로그인 페이지
   },
 });
