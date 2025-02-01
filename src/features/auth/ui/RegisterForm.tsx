@@ -29,6 +29,7 @@ export default function RegisterForm() {
       });
 
       if (res.status === 201) {
+        alert('회원가입을 완료하였습니다.');
         router.push('/login');
       }
     } catch (error: any) {
