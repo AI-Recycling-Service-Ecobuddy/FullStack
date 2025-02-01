@@ -13,7 +13,7 @@ export default function DetailPages() {
         fill
         priority
         alt='nature background'
-        className='object-cover'
+        className='fixed top-0 left-0 z-0 object-cover'
       />
 
       <div className='relative z-10 w-2/3 overflow-hidden rounded-lg bg-white shadow-lg'>

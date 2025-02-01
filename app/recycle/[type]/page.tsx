@@ -9,7 +9,7 @@ export default function RecyclePages() {
         fill
         priority
         alt='nature background'
-        className='object-cover'
+        className='fixed top-0 left-0 z-0 object-cover'
       />
       <DetailLink />
     </div>
