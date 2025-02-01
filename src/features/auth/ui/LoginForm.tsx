@@ -61,7 +61,7 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete='current-password'
         />
-        <button className='mt-4 rounded-md bg-green-400 p-1 font-semibold text-white duration-200 hover:bg-green-500'>
+        <button className='mt-4 cursor-pointer rounded-md bg-green-400 p-1 font-semibold text-white duration-200 hover:bg-green-500'>
           로그인
         </button>
         {error && (

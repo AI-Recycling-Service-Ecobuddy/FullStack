@@ -22,12 +22,14 @@ export default function RegisterForm() {
     }
 
     try {
-      const res = await axios.post('/api/register', { name, email, password });
+      const res = await axios.post('/api/auth/register', {
+        name,
+        email,
+        password,
+      });
 
       if (res.status === 201) {
-        const form = e.target as HTMLFormElement;
-        form.reset();
-        router.push('/');
+        router.push('/login');
       }
     } catch (error: any) {
       if (error.response) {
