@@ -3,7 +3,7 @@ import DetailLink from '../../../src/features/recycle/ui/DetailLink';
 
 export default function RecyclePages() {
   return (
-    <div className='flex h-full items-center justify-center'>
+    <div className='relative flex h-full items-center justify-center'>
       <Image
         src='/nature.webp'
         fill
