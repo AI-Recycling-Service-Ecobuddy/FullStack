@@ -1,24 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { NewsItem } from '../model/types';
-import { getNews } from '../api/getNews';
+import { useNewsQuery } from '../hooks/useNewsQuery';
 
 export default function News() {
-  const [news, setNews] = useState<NewsItem[]>([]);
+  const { data: news = [], isLoading, error } = useNewsQuery();
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const news = await getNews();
-        setNews(news);
-      } catch (error) {
-        console.error('Failed to fetch news:', error);
-      }
-    };
+  if (isLoading) {
+    return <p className='text-center text-gray-500'>뉴스를 불러오는 중...</p>;
+  }
 
-    fetchNews();
-  }, []);
+  if (error) {
+    return (
+      <p className='text-center text-red-500'>
+        뉴스를 불러오는 데 실패했습니다.
+      </p>
+    );
+  }
 
   return (
     <div className='mx-auto my-8 max-w-3xl'>
